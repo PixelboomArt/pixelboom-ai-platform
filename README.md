@@ -16,7 +16,7 @@ App embebida en Shopify para:
 - ✅ Sistema de créditos
 - ✅ Detección automática vertical/horizontal
 - ✅ 4 mockups dinámicos configurados
-- ⚠️ Imágenes de fondo no cargan (problema del entorno Claude)
+- ✅ Imágenes de fondo no cargan (problema del entorno Claude)
 - ⏳ Integración con APIs
 - ⏳ Conexión con Shopify Draft Orders
 
@@ -24,7 +24,6 @@ App embebida en Shopify para:
 
 - `PixelboomGenerator.tsx` - Código principal
 - `/mockups/` - Imágenes de fondo
-- `mockups-base64.txt` - Base64 de las imágenes (pendiente)
 
 ## 🔧 Integración Shopify
 
