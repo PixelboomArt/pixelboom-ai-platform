@@ -35,13 +35,26 @@ const App = () => {
     `}</style>
   );
 
+  // --- PRODUCT DATA ---
+  const productOptions = {
+    vertical: [
+      { size: '30x45cm', price: 75 },
+      { size: '50x75cm', price: 119 },
+      { size: '60x90cm', price: 135 },
+    ],
+    horizontal: [
+      { size: '45x30cm', price: 75 },
+      { size: '75x50cm', price: 119 },
+      { size: '90x60cm', price: 135 },
+    ],
+  };
 
   // State management for the application flow and user data
   const [currentStep, setCurrentStep] = useState('home'); // Tracks the current view (home, generate, select, preview)
   const [credits, setCredits] = useState(4); // User's available credits for generation
   const [prompt, setPrompt] = useState(''); // Text prompt for AI image generation
   const [format, setFormat] = useState('vertical'); // Image orientation: 'vertical' or 'horizontal'
-  const [size, setSize] = useState('30x40cm'); // Desired print size
+  const [size, setSize] = useState(productOptions.vertical[0].size); // Desired print size, initialized to the first vertical option
   const [generatedImages, setGeneratedImages] = useState([]); // Array of URLs for generated images
   const [selectedImage, setSelectedImage] = useState(null); // The image chosen by the user for preview
   const [currentMockup, setCurrentMockup] = useState(0); // Index of the current mockup background
@@ -51,6 +64,14 @@ const App = () => {
   const [showModal, setShowModal] = useState(false); // Visibility of the generic confirmation modal
   const [modalMessage, setModalMessage] = useState(''); // Message for the confirmation modal
   const [error, setError] = useState(null); // Error message for the alert component
+
+  // --- EFFECT TO UPDATE SIZE ON FORMAT CHANGE ---
+  useEffect(() => {
+    // When format changes, reset size to the first available option for that format
+    // to prevent an invalid size/format combination.
+    setSize(productOptions[format][0].size);
+  }, [format]);
+
 
   // --- MOCKUP CONFIGURATION (WITH FINAL HORIZONTAL VALUES) ---
   const mockups = [
@@ -173,9 +194,11 @@ const App = () => {
     setShowModal(true);
   };
   
-  const getPriceForSize = (size) => {
-    const prices = { '20x30cm': 39.99, '30x40cm': 49.99, '40x60cm': 69.99 };
-    return prices[size] || 49.99;
+  const getPriceForSize = (selectedSize) => {
+    // Finds the selected size in the product options and returns its price.
+    const allOptions = [...productOptions.vertical, ...productOptions.horizontal];
+    const option = allOptions.find(opt => opt.size === selectedSize);
+    return option ? option.price.toFixed(2) : '0.00';
   };
 
   // --- UI COMPONENTS ---
@@ -303,9 +326,9 @@ const App = () => {
                   <div>
                     <label className="block text-gray-300 mb-3 text-lg">3. Tamaño</label>
                     <select value={size} onChange={(e) => setSize(e.target.value)} className="w-full bg-gray-800 border-2 border-gray-700 rounded-lg p-4 text-white focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all">
-                      <option value="20x30cm">20x30cm</option>
-                      <option value="30x40cm">30x40cm</option>
-                      <option value="40x60cm">40x60cm</option>
+                      {productOptions[format].map(option => (
+                        <option key={option.size} value={option.size}>{option.size}</option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -361,7 +384,7 @@ const App = () => {
                   <div className="space-y-4 text-gray-300">
                     <div className="flex justify-between items-center"><span className="text-lg">Formato:</span><span className="text-white font-bold text-lg capitalize bg-gray-700 px-3 py-1 rounded">{format}</span></div>
                     <div className="flex justify-between items-center"><span className="text-lg">Tamaño:</span><span className="text-white font-bold text-lg bg-gray-700 px-3 py-1 rounded">{size}</span></div>
-                    <div className="flex justify-between items-center"><span className="text-lg">Material:</span><span className="text-white font-bold text-lg bg-gray-700 px-3 py-1 rounded">Metal Premium</span></div>
+                    <div className="flex justify-between items-center"><span className="text-lg">Material:</span><span className="text-white font-bold text-lg bg-gray-700 px-3 py-1 rounded">Aluminio Premium 3mm</span></div>
                     <hr className="border-gray-700 my-4" />
                     <div className="flex justify-between items-center text-2xl"><span className="font-bold">Precio:</span><span className="text-cyan-400 font-bold">€{getPriceForSize(size)}</span></div>
                   </div>
