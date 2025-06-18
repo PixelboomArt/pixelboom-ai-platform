@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Zap, Upload, Eye, ShoppingCart, Sparkles, ArrowLeft, ArrowRight, User, Check, AlertCircle } from 'lucide-react';
+import { Zap, Upload, Eye, ShoppingCart, Sparkles, ArrowLeft, ArrowRight, User, Check, AlertCircle, Settings } from 'lucide-react';
 
 // Main App Component for the Pixelboom AI Art Generator
 const App = () => {
@@ -19,15 +19,14 @@ const App = () => {
   const [modalMessage, setModalMessage] = useState(''); // Message for the confirmation modal
   const [error, setError] = useState(null); // Error message for the alert component
 
-  // --- MOCKUP CONFIGURATION ---
-  // The 'defaults.vertical' objects now contain the final, hardcoded values provided by the user.
+  // --- MOCKUP CONFIGURATION (WITH FINAL HORIZONTAL VALUES) ---
   const mockups = [
     {
       name: 'Cyberpunk Gallery',
       bg: 'https://res.cloudinary.com/dtdg5smr8/image/upload/v1749812129/pixelboom-cyberpunk-gallery.jpg_o3y5vo.png',
       defaults: {
         vertical: { top: 15.5, left: 18.5, width: 23.0, height: 61.5, rotateY: 22.0, rotateX: 0.0 },
-        horizontal: { top: 28, left: 10, width: 45, height: 30, rotateY: 5, rotateX: 0 }
+        horizontal: { top: 18.5, left: 12.5, width: 45.5, height: 55.0, rotateY: 16.0, rotateX: 0.0 }
       },
       baseStyle: { boxShadow: '0 25px 60px rgba(0, 191, 255, 0.3)', border: '2px solid rgba(0, 191, 255, 0.2)' }
     },
@@ -36,7 +35,7 @@ const App = () => {
       bg: 'https://res.cloudinary.com/dtdg5smr8/image/upload/v1750169494/Gaming_Room_v2_yiqdkn.png',
       defaults: {
         vertical: { top: 0.5, left: 41.5, width: 17.5, height: 46.5, rotateY: 0.0, rotateX: 0.0 },
-        horizontal: { top: 18, left: 35, width: 30, height: 20, rotateY: 2, rotateX: 0 }
+        horizontal: { top: 4.0, left: 35.0, width: 30.5, height: 39.0, rotateY: 2.0, rotateX: 0.0 }
       },
       baseStyle: { boxShadow: '0 20px 50px rgba(233, 30, 99, 0.4)', border: '2px solid rgba(233, 30, 99, 0.2)' }
     },
@@ -45,7 +44,7 @@ const App = () => {
       bg: 'https://res.cloudinary.com/dtdg5smr8/image/upload/v1749812130/pixelboom-modern-loft.jpg_yoxwi0.png',
       defaults: {
         vertical: { top: 6.0, left: 39.0, width: 22.0, height: 58.5, rotateY: 15.0, rotateX: 0.0 },
-        horizontal: { top: 25, left: 28, width: 40, height: 26.6, rotateY: 8, rotateX: 0 }
+        horizontal: { top: 6.0, left: 30.5, width: 39.5, height: 48.5, rotateY: 14.0, rotateX: 0.0 }
       },
       baseStyle: { boxShadow: '0 15px 40px rgba(0, 0, 0, 0.4)', border: '1px solid rgba(0, 0, 0, 0.2)' }
     },
@@ -54,28 +53,28 @@ const App = () => {
       bg: 'https://res.cloudinary.com/dtdg5smr8/image/upload/v1749812130/pixelboom-gaming-bedroom.jpg_efhkzm.png',
       defaults: {
         vertical: { top: 0.5, left: 40.0, width: 20.5, height: 51.0, rotateY: 0.0, rotateX: 0.0 },
-        horizontal: { top: 15, left: 32.5, width: 35, height: 23.3, rotateY: 0, rotateX: 0 }
+        horizontal: { top: 3.0, left: 31.0, width: 39.0, height: 46.0, rotateY: 0.0, rotateX: 0.0 }
       },
       baseStyle: { boxShadow: '0 20px 60px rgba(138, 43, 226, 0.5)', border: '2px solid rgba(138, 43, 226, 0.3)' }
     }
   ];
   
-  // --- DYNAMIC FRAME STYLE LOGIC ---
-  // Simplified function to directly use the hardcoded default styles.
-  const getFrameStyle = () => {
-      const mockupConf = mockups[currentMockup];
-      const style = mockupConf.defaults[format];
-      return {
-          position: 'absolute',
-          top: `${style.top}%`,
-          left: `${style.left}%`,
-          width: `${style.width}%`,
-          height: `${style.height}%`,
-          transition: 'all 0.2s ease-in-out',
-          ...mockupConf.baseStyle,
-          transform: `perspective(1800px) rotateY(${style.rotateY}deg) rotateX(${style.rotateX}deg)`
-      };
-  };
+    // --- DYNAMIC FRAME STYLE LOGIC ---
+    const getFrameStyle = () => {
+        const mockupConf = mockups[currentMockup];
+        const style = mockupConf.defaults[format];
+
+        return {
+            position: 'absolute',
+            top: `${style.top}%`,
+            left: `${style.left}%`,
+            width: `${style.width}%`,
+            height: `${style.height}%`,
+            transition: 'all 0.2s ease-in-out',
+            ...mockupConf.baseStyle,
+            transform: `perspective(1800px) rotateY(${style.rotateY}deg) rotateX(${style.rotateX}deg)`
+        };
+    };
 
   // --- SAMPLE IMAGES ---
   const sampleImages = {
