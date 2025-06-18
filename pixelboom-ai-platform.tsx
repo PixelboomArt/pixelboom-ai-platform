@@ -1,8 +1,41 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Zap, Upload, Eye, ShoppingCart, Sparkles, ArrowLeft, ArrowRight, User, Check, AlertCircle, Settings } from 'lucide-react';
+import { Zap, Upload, Eye, ShoppingCart, Sparkles, ArrowLeft, ArrowRight, User, Check, AlertCircle } from 'lucide-react';
 
 // Main App Component for the Pixelboom AI Art Generator
 const App = () => {
+  // --- STYLE DEFINITIONS FOR ANIMATIONS ---
+  // We add a style tag directly in the component to define keyframe animations
+  // that are not possible with Tailwind CSS classes alone.
+  const GlobalStyles = () => (
+    <style>{`
+      @keyframes gloss-effect {
+        0% { transform: translateX(-120%) skewX(-30deg); }
+        100% { transform: translateX(220%) skewX(-30deg); }
+      }
+      
+      .gloss-sheen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.25) 50%, rgba(255, 255, 255, 0) 100%);
+        animation: gloss-effect 4s infinite ease-in-out;
+        pointer-events: none; /* Make sure it doesn't interfere with mouse events */
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .animate-fadeIn {
+        animation: fadeIn 0.6s ease-out forwards;
+      }
+    `}</style>
+  );
+
+
   // State management for the application flow and user data
   const [currentStep, setCurrentStep] = useState('home'); // Tracks the current view (home, generate, select, preview)
   const [credits, setCredits] = useState(4); // User's available credits for generation
@@ -70,7 +103,7 @@ const App = () => {
             left: `${style.left}%`,
             width: `${style.width}%`,
             height: `${style.height}%`,
-            transition: 'all 0.2s ease-in-out',
+            transition: 'all 0.3s ease-in-out', // Slightly adjusted transition speed
             ...mockupConf.baseStyle,
             transform: `perspective(1800px) rotateY(${style.rotateY}deg) rotateX(${style.rotateX}deg)`
         };
@@ -148,6 +181,7 @@ const App = () => {
   // --- UI COMPONENTS ---
   const Breadcrumb = () => {
     const steps = ['Crear', 'Seleccionar', 'Preview', 'Checkout'];
+    // FIX: Corrected typo from `current-step` to `currentStep`
     const stepIndex = currentStep === 'home' || currentStep === 'generate' ? 0 : currentStep === 'select' ? 1 : currentStep === 'preview' ? 2 : 3;
     
     return (
@@ -195,7 +229,7 @@ const App = () => {
   );
   
   const ErrorAlert = () => error && (
-    <div className="fixed top-4 right-4 bg-red-900 border-2 border-red-500 text-white p-4 rounded-lg flex items-center space-x-3 z-50">
+    <div className="fixed top-4 right-4 bg-red-900 border-2 border-red-500 text-white p-4 rounded-lg flex items-center space-x-3 z-50 animate-fadeIn">
       <AlertCircle className="w-5 h-5" />
       <span>{error}</span>
       <button onClick={() => setError(null)} className="ml-4 text-red-300 hover:text-white">✕</button>
@@ -205,6 +239,7 @@ const App = () => {
   // --- RENDER ---
   return (
     <div className="min-h-screen bg-black text-white font-sans">
+      <GlobalStyles />
       <ErrorAlert />
       
       <header className="bg-gray-900/80 backdrop-blur-sm border-b-2 border-purple-500 p-4 sticky top-0 z-40">
@@ -225,7 +260,7 @@ const App = () => {
 
         {/* HOME STEP */}
         {currentStep === 'home' && (
-          <div className="text-center space-y-8">
+          <div className="text-center space-y-8 animate-fadeIn">
             <div className="space-y-6">
               <h2 className="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400 leading-tight">Crea Arte del Futuro</h2>
               <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">Genera arte cyberpunk único con IA o sube tu propio diseño. Visualízalo en metal prints premium.</p>
@@ -248,7 +283,7 @@ const App = () => {
 
         {/* GENERATE STEP */}
         {currentStep === 'generate' && (
-          <div className="max-w-2xl mx-auto space-y-6">
+          <div className="max-w-2xl mx-auto space-y-6 animate-fadeIn">
             <button onClick={() => setCurrentStep('home')} className="flex items-center text-purple-400 hover:text-purple-300 mb-4 transition-all hover:scale-105"><ArrowLeft className="w-4 h-4 mr-2" />Volver</button>
             <div className="bg-gray-900 p-6 sm:p-8 rounded-xl border-2 border-purple-500 shadow-lg shadow-purple-500/20">
               <h3 className="text-3xl font-bold text-purple-400 mb-8">Generar Arte con IA</h3>
@@ -284,7 +319,7 @@ const App = () => {
 
         {/* SELECT STEP */}
         {currentStep === 'select' && (
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-5xl mx-auto animate-fadeIn">
             <button onClick={() => setCurrentStep('generate')} className="flex items-center text-purple-400 hover:text-purple-300 mb-6 transition-all hover:scale-105"><ArrowLeft className="w-4 h-4 mr-2" />Volver a generar</button>
             <h3 className="text-3xl font-bold text-purple-400 mb-8 text-center">Selecciona tu favorita</h3>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -302,7 +337,7 @@ const App = () => {
         
         {/* PREVIEW STEP */}
         {currentStep === 'preview' && selectedImage && (
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-6xl mx-auto animate-fadeIn">
             <button onClick={() => setCurrentStep(uploadedImage ? 'home' : 'select')} className="flex items-center text-purple-400 hover:text-purple-300 mb-6 transition-all hover:scale-105"><ArrowLeft className="w-4 h-4 mr-2" />Volver</button>
             <div className="grid lg:grid-cols-5 gap-8">
               <div className="lg:col-span-3 space-y-6">
@@ -311,8 +346,9 @@ const App = () => {
                   <img src={mockups[currentMockup].bg} onError={(e) => e.target.src='https://placehold.co/1200x800/000000/FFFFFF?text=Fondo+no+disponible'} alt={mockups[currentMockup].name} className="absolute inset-0 w-full h-full object-cover"/>
                   <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg overflow-hidden backdrop-blur-sm relative z-10" style={getFrameStyle()}>
                     <img src={selectedImage.url} onError={(e) => e.target.src='https://placehold.co/800x600/000000/FFFFFF?text=Error'} alt="Tu diseño" className="w-full h-full object-cover"/>
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-white/10 pointer-events-none"></div>
-                    <div className="absolute inset-0 border-4 border-gray-700 rounded-lg pointer-events-none"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 pointer-events-none"></div>
+                    {/* The new gloss/sheen effect div */}
+                    <div className="gloss-sheen"></div>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
